@@ -86,20 +86,18 @@ fn test_topic_names() {
 
     // DS Pipeline Synchronizer Task Events
     assert_eq!(Topic::DsPipelineSynchronizerTaskRequested.to_string(), "ds.pipeline.synchronizer.task.requested.v1");
+    assert_eq!(Topic::DsPipelineSynchronizerTaskQueued.to_string(), "ds.pipeline.synchronizer.task.queued.v1");
+    assert_eq!(Topic::DsPipelineSynchronizerTaskStarted.to_string(), "ds.pipeline.synchronizer.task.started.v1");
     assert_eq!(Topic::DsPipelineSynchronizerTaskCompleted.to_string(), "ds.pipeline.synchronizer.task.completed.v1");
     assert_eq!(Topic::DsPipelineSynchronizerTaskFailed.to_string(), "ds.pipeline.synchronizer.task.failed.v1");
     assert_eq!(Topic::DsPipelineSynchronizerMetricCreated.to_string(), "ds.pipeline.synchronizer.metric.created.v1");
 
-    // DS Pipeline Synchronizer Job Events
-    assert_eq!(Topic::DsPipelineSynchronizerJobRequested.to_string(), "ds.pipeline.synchronizer.job.requested.v1");
-    assert_eq!(Topic::DsPipelineSynchronizerJobCompleted.to_string(), "ds.pipeline.synchronizer.job.completed.v1");
-    assert_eq!(Topic::DsPipelineSynchronizerJobFailed.to_string(), "ds.pipeline.synchronizer.job.failed.v1");
-    assert_eq!(Topic::DsPipelineSynchronizerMetricCreated.to_string(), "ds.pipeline.synchronizer.metric.created.v1");
-
-    // DS Pipeline Clone Task Events
-    assert_eq!(Topic::DsPipelineCloneTaskRequested.to_string(), "ds.pipeline.clone.task.requested.v1");
-    assert_eq!(Topic::DsPipelineCloneTaskCompleted.to_string(), "ds.pipeline.clone.task.completed.v1");
-    assert_eq!(Topic::DsPipelineCloneTaskFailed.to_string(), "ds.pipeline.clone.task.failed.v1");
+    // DS Pipeline Clone Job Events
+    assert_eq!(Topic::DsPipelineCloneJobRequested.to_string(), "ds.pipeline.clone.job.requested.v1");
+    assert_eq!(Topic::DsPipelineCloneJobQueued.to_string(), "ds.pipeline.clone.job.queued.v1");
+    assert_eq!(Topic::DsPipelineCloneJobStarted.to_string(), "ds.pipeline.clone.job.started.v1");
+    assert_eq!(Topic::DsPipelineCloneJobCompleted.to_string(), "ds.pipeline.clone.job.completed.v1");
+    assert_eq!(Topic::DsPipelineCloneJobFailed.to_string(), "ds.pipeline.clone.job.failed.v1");
     assert_eq!(Topic::DsPipelineCloneMetricCreated.to_string(), "ds.pipeline.clone.metric.created.v1");
 
     // DS Workflow Pipeline Job Events
@@ -140,6 +138,9 @@ fn test_topic_names() {
 
     // DS Core Billing Events
     assert_eq!(Topic::DsCoreBillingUsageCreated.to_string(), "ds.core.billing.usage.created.v1");
+
+    // All Topics
+    assert_eq!(Topic::AllTopics.to_string(), "*");
 }
 
 #[test]
