@@ -30,45 +30,89 @@ use strum::{AsRefStr, Display, EnumString};
 /// * `IdpIdentityTenantCreated` - The event when an identity tenant is created.
 /// * `IdpIdentityTenantUpdated` - The event when an identity tenant is updated.
 /// * `IdpIdentityTenantDeleted` - The event when an identity tenant is deleted.
+///
 /// * `DsPipelineJobRequested` - The event when a pipeline job is requested.
 /// * `DsPipelineJobStarted` - The event when a pipeline job is started.
 /// * `DsPipelineJobCompleted` - The event when a pipeline job is completed.
 /// * `DsPipelineJobFailed` - The event when a pipeline job is failed.
+///
+/// * `DsPipelineInjectionTaskRequested` - The event when a pipeline injection task is requested.
+/// * `DsPipelineInjectionTaskQueued` - The event when a pipeline injection task is queued.
+/// * `DsPipelineInjectionTaskStarted` - The event when a pipeline injection task is started.
 /// * `DsPipelineInjectionTaskCompleted` - The event when a pipeline injection task is completed.
 /// * `DsPipelineInjectionTaskFailed` - The event when a pipeline injection task is failed.
 /// * `DsPipelineInjectionMetricCreated` - The event when a pipeline injection metric is created.
+///
+/// * `DsPipelineTransformTaskRequested` - The event when a pipeline transform task is requested.
+/// * `DsPipelineTransformTaskQueued` - The event when a pipeline transform task is queued.
+/// * `DsPipelineTransformTaskStarted` - The event when a pipeline transform task is started.
 /// * `DsPipelineTransformTaskCompleted` - The event when a pipeline transform task is completed.
 /// * `DsPipelineTransformTaskFailed` - The event when a pipeline transform task is failed.
 /// * `DsPipelineTransformMetricCreated` - The event when a pipeline transform metric is created.
+///
+/// * `DsPipelineMigratorTaskRequested` - The event when a pipeline migrator task is requested.
+/// * `DsPipelineMigratorTaskQueued` - The event when a pipeline migrator task is queued.
+/// * `DsPipelineMigratorTaskStarted` - The event when a pipeline migrator task is started.
 /// * `DsPipelineMigratorTaskCompleted` - The event when a pipeline migrator task is completed.
 /// * `DsPipelineMigratorTaskFailed` - The event when a pipeline migrator task is failed.
 /// * `DsPipelineMigratorMetricCreated` - The event when a pipeline migrator metric is created.
+///
+/// * `DsPipelineSynchronizerJobRequested` - The event when a pipeline synchronizer job is requested.
+/// * `DsPipelineSynchronizerJobQueued` - The event when a pipeline synchronizer job is queued.
+/// * `DsPipelineSynchronizerJobStarted` - The event when a pipeline synchronizer job is started.
+/// * `DsPipelineSynchronizerJobCompleted` - The event when a pipeline synchronizer job is completed.
+/// * `DsPipelineSynchronizerJobFailed` - The event when a pipeline synchronizer job is failed.
+///
 /// * `DsPipelineSynchronizerTaskRequested` - The event when a pipeline synchronizer task is requested.
+/// * `DsPipelineSynchronizerTaskQueued` - The event when a pipeline synchronizer task is queued.
+/// * `DsPipelineSynchronizerTaskStarted` - The event when a pipeline synchronizer task is started.
 /// * `DsPipelineSynchronizerTaskCompleted` - The event when a pipeline synchronizer task is completed.
 /// * `DsPipelineSynchronizerTaskFailed` - The event when a pipeline synchronizer task is failed.
 /// * `DsPipelineSynchronizerMetricCreated` - The event when a pipeline synchronizer metric is created.
-/// * `DsPipelineSynchronizerJobRequested` - The event when a pipeline synchronizer job is requested.
-/// * `DsPipelineSynchronizerJobCompleted` - The event when a pipeline synchronizer job is completed.
-/// * `DsPipelineSynchronizerJobFailed` - The event when a pipeline synchronizer job is failed.
-/// * `DsPipelineSynchronizerJobMetricCreated` - The event when a pipeline synchronizer job metric is created.
+///
+/// * `DsPipelineCloneJobRequested` - The event when a pipeline clone job is requested.
+/// * `DsPipelineCloneJobQueued` - The event when a pipeline clone job is queued.
+/// * `DsPipelineCloneJobStarted` - The event when a pipeline clone job is started.
+/// * `DsPipelineCloneJobCompleted` - The event when a pipeline clone job is completed.
+/// * `DsPipelineCloneJobFailed` - The event when a pipeline clone job is failed.
+/// * `DsPipelineCloneMetricCreated` - The event when a pipeline clone metric is created.
+///
 /// * `DsPipelineCloneTaskRequested` - The event when a pipeline clone task is requested.
+/// * `DsPipelineCloneTaskQueued` - The event when a pipeline clone task is queued.
+/// * `DsPipelineCloneTaskStarted` - The event when a pipeline clone task is started.
 /// * `DsPipelineCloneTaskCompleted` - The event when a pipeline clone task is completed.
 /// * `DsPipelineCloneTaskFailed` - The event when a pipeline clone task is failed.
-/// * `DsPipelineCloneMetricCreated` - The event when a pipeline clone metric is created.
+///
 /// * `DsWorkflowPipelineJobRequested` - The event when a workflow pipeline job is requested.
 /// * `DsWorkflowPipelineJobQueued` - The event when a workflow pipeline job is queued.
 /// * `DsWorkflowPipelineJobStarted` - The event when a workflow pipeline job is started.
 /// * `DsWorkflowPipelineJobCompleted` - The event when a workflow pipeline job is completed.
 /// * `DsWorkflowPipelineJobFailed` - The event when a workflow pipeline job is failed.
+///
 /// * `DsWorkflowPipelineTaskStarted` - The event when a workflow pipeline task is started.
 /// * `DsWorkflowPipelineTaskCompleted` - The event when a workflow pipeline task is completed.
 /// * `DsWorkflowPipelineTaskFailed` - The event when a workflow pipeline task is failed.
+///
 /// * `DsWorkflowPipelineCreated` - The event when a workflow pipeline is created.
 /// * `DsWorkflowPipelineUpdated` - The event when a workflow pipeline is updated.
 /// * `DsWorkflowPipelineDeleted` - The event when a workflow pipeline is deleted.
+///
 /// * `DsWorkflowDatasetCreated` - The event when a workflow dataset is created.
 /// * `DsWorkflowDatasetUpdated` - The event when a workflow dataset is updated.
 /// * `DsWorkflowDatasetDeleted` - The event when a workflow dataset is deleted.
+///
+/// * `DsWorkflowLinkedServiceCreated` - The event when a workflow linked service is created.
+/// * `DsWorkflowLinkedServiceUpdated` - The event when a workflow linked service is updated.
+/// * `DsWorkflowLinkedServiceDeleted` - The event when a workflow linked service is deleted.
+///
+/// * `DsCoreProvisionJobRequested` - The event when a core provision job is requested.
+/// * `DsCoreProvisionJobCompleted` - The event when a core provision job is completed.
+/// * `DsCoreProvisionJobFailed` - The event when a core provision job is failed.
+///
+/// * `DsCoreConfigInfoUpdated` - The event when a core config info is updated.
+/// * `DsCoreConfigStatusUpdated` - The event when a core config status is updated.
+///
+/// * `DsCoreBillingUsageCreated` - The event when a core billing usage is created.
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Display, AsRefStr, EnumString)]
 pub enum Topic {
@@ -101,6 +145,12 @@ pub enum Topic {
     DsPipelineJobFailed,
 
     // DS Pipeline Injection Task Events
+    #[strum(serialize = "ds.pipeline.injection.task.requested.v1")]
+    DsPipelineInjectionTaskRequested,
+    #[strum(serialize = "ds.pipeline.injection.task.queued.v1")]
+    DsPipelineInjectionTaskQueued,
+    #[strum(serialize = "ds.pipeline.injection.task.started.v1")]
+    DsPipelineInjectionTaskStarted,
     #[strum(serialize = "ds.pipeline.injection.task.completed.v1")]
     DsPipelineInjectionTaskCompleted,
     #[strum(serialize = "ds.pipeline.injection.task.failed.v1")]
@@ -109,6 +159,12 @@ pub enum Topic {
     DsPipelineInjectionMetricCreated,
 
     // DS Pipeline Transform Task Events
+    #[strum(serialize = "ds.pipeline.transform.task.requested.v1")]
+    DsPipelineTransformTaskRequested,
+    #[strum(serialize = "ds.pipeline.transform.task.queued.v1")]
+    DsPipelineTransformTaskQueued,
+    #[strum(serialize = "ds.pipeline.transform.task.started.v1")]
+    DsPipelineTransformTaskStarted,
     #[strum(serialize = "ds.pipeline.transform.task.completed.v1")]
     DsPipelineTransformTaskCompleted,
     #[strum(serialize = "ds.pipeline.transform.task.failed.v1")]
@@ -117,6 +173,12 @@ pub enum Topic {
     DsPipelineTransformMetricCreated,
 
     // DS Pipeline Migrator Task Events
+    #[strum(serialize = "ds.pipeline.migrator.task.requested.v1")]
+    DsPipelineMigratorTaskRequested,
+    #[strum(serialize = "ds.pipeline.migrator.task.queued.v1")]
+    DsPipelineMigratorTaskQueued,
+    #[strum(serialize = "ds.pipeline.migrator.task.started.v1")]
+    DsPipelineMigratorTaskStarted,
     #[strum(serialize = "ds.pipeline.migrator.task.completed.v1")]
     DsPipelineMigratorTaskCompleted,
     #[strum(serialize = "ds.pipeline.migrator.task.failed.v1")]
@@ -124,9 +186,25 @@ pub enum Topic {
     #[strum(serialize = "ds.pipeline.migrator.metric.created.v1")]
     DsPipelineMigratorMetricCreated,
 
+    // DS Pipeline Synchronizer Job Events
+    #[strum(serialize = "ds.pipeline.synchronizer.job.requested.v1")]
+    DsPipelineSynchronizerJobRequested,
+    #[strum(serialize = "ds.pipeline.synchronizer.job.queued.v1")]
+    DsPipelineSynchronizerJobQueued,
+    #[strum(serialize = "ds.pipeline.synchronizer.job.started.v1")]
+    DsPipelineSynchronizerJobStarted,
+    #[strum(serialize = "ds.pipeline.synchronizer.job.completed.v1")]
+    DsPipelineSynchronizerJobCompleted,
+    #[strum(serialize = "ds.pipeline.synchronizer.job.failed.v1")]
+    DsPipelineSynchronizerJobFailed,
+
     // DS Pipeline Synchronizer Task Events
     #[strum(serialize = "ds.pipeline.synchronizer.task.requested.v1")]
     DsPipelineSynchronizerTaskRequested,
+    #[strum(serialize = "ds.pipeline.synchronizer.task.queued.v1")]
+    DsPipelineSynchronizerTaskQueued,
+    #[strum(serialize = "ds.pipeline.synchronizer.task.started.v1")]
+    DsPipelineSynchronizerTaskStarted,
     #[strum(serialize = "ds.pipeline.synchronizer.task.completed.v1")]
     DsPipelineSynchronizerTaskCompleted,
     #[strum(serialize = "ds.pipeline.synchronizer.task.failed.v1")]
@@ -134,23 +212,31 @@ pub enum Topic {
     #[strum(serialize = "ds.pipeline.synchronizer.metric.created.v1")]
     DsPipelineSynchronizerMetricCreated,
 
-    // DS Pipeline Synchronizer Job Events
-    #[strum(serialize = "ds.pipeline.synchronizer.job.requested.v1")]
-    DsPipelineSynchronizerJobRequested,
-    #[strum(serialize = "ds.pipeline.synchronizer.job.completed.v1")]
-    DsPipelineSynchronizerJobCompleted,
-    #[strum(serialize = "ds.pipeline.synchronizer.job.failed.v1")]
-    DsPipelineSynchronizerJobFailed,
+    // DS Pipeline Clone Job Events
+    #[strum(serialize = "ds.pipeline.clone.job.requested.v1")]
+    DsPipelineCloneJobRequested,
+    #[strum(serialize = "ds.pipeline.clone.job.queued.v1")]
+    DsPipelineCloneJobQueued,
+    #[strum(serialize = "ds.pipeline.clone.job.started.v1")]
+    DsPipelineCloneJobStarted,
+    #[strum(serialize = "ds.pipeline.clone.job.completed.v1")]
+    DsPipelineCloneJobCompleted,
+    #[strum(serialize = "ds.pipeline.clone.job.failed.v1")]
+    DsPipelineCloneJobFailed,
+    #[strum(serialize = "ds.pipeline.clone.metric.created.v1")]
+    DsPipelineCloneMetricCreated,
 
     // DS Pipeline Clone Task Events
     #[strum(serialize = "ds.pipeline.clone.task.requested.v1")]
     DsPipelineCloneTaskRequested,
+    #[strum(serialize = "ds.pipeline.clone.task.queued.v1")]
+    DsPipelineCloneTaskQueued,
+    #[strum(serialize = "ds.pipeline.clone.task.started.v1")]
+    DsPipelineCloneTaskStarted,
     #[strum(serialize = "ds.pipeline.clone.task.completed.v1")]
     DsPipelineCloneTaskCompleted,
     #[strum(serialize = "ds.pipeline.clone.task.failed.v1")]
     DsPipelineCloneTaskFailed,
-    #[strum(serialize = "ds.pipeline.clone.metric.created.v1")]
-    DsPipelineCloneMetricCreated,
 
     // DS Workflow Pipeline Job Events
     #[strum(serialize = "ds.workflow.pipeline.job.requested.v1")]
@@ -213,6 +299,10 @@ pub enum Topic {
     // DS Core Billing Events
     #[strum(serialize = "ds.core.billing.usage.created.v1")]
     DsCoreBillingUsageCreated,
+
+    // All Topics
+    #[strum(serialize = "*")]
+    AllTopics,
 }
 
 // endregion: --> Topic
