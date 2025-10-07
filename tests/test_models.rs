@@ -70,19 +70,35 @@ fn test_topic_names() {
     assert_eq!(Topic::DsPipelineJobFailed.to_string(), "ds.pipeline..job.failed.v1");
 
     // DS Pipeline Injection Task Events
+    assert_eq!(Topic::DsPipelineInjectionTaskRequested.to_string(), "ds.pipeline.injection.task.requested.v1");
+    assert_eq!(Topic::DsPipelineInjectionTaskQueued.to_string(), "ds.pipeline.injection.task.queued.v1");
+    assert_eq!(Topic::DsPipelineInjectionTaskStarted.to_string(), "ds.pipeline.injection.task.started.v1");
     assert_eq!(Topic::DsPipelineInjectionTaskCompleted.to_string(), "ds.pipeline.injection.task.completed.v1");
     assert_eq!(Topic::DsPipelineInjectionTaskFailed.to_string(), "ds.pipeline.injection.task.failed.v1");
     assert_eq!(Topic::DsPipelineInjectionMetricCreated.to_string(), "ds.pipeline.injection.metric.created.v1");
 
     // DS Pipeline Transform Task Events
+    assert_eq!(Topic::DsPipelineTransformTaskRequested.to_string(), "ds.pipeline.transform.task.requested.v1");
+    assert_eq!(Topic::DsPipelineTransformTaskQueued.to_string(), "ds.pipeline.transform.task.queued.v1");
+    assert_eq!(Topic::DsPipelineTransformTaskStarted.to_string(), "ds.pipeline.transform.task.started.v1");
     assert_eq!(Topic::DsPipelineTransformTaskCompleted.to_string(), "ds.pipeline.transform.task.completed.v1");
     assert_eq!(Topic::DsPipelineTransformTaskFailed.to_string(), "ds.pipeline.transform.task.failed.v1");
     assert_eq!(Topic::DsPipelineTransformMetricCreated.to_string(), "ds.pipeline.transform.metric.created.v1");
 
     // DS Pipeline Migrator Task Events
+    assert_eq!(Topic::DsPipelineMigratorTaskRequested.to_string(), "ds.pipeline.migrator.task.requested.v1");
+    assert_eq!(Topic::DsPipelineMigratorTaskQueued.to_string(), "ds.pipeline.migrator.task.queued.v1");
+    assert_eq!(Topic::DsPipelineMigratorTaskStarted.to_string(), "ds.pipeline.migrator.task.started.v1");
     assert_eq!(Topic::DsPipelineMigratorTaskCompleted.to_string(), "ds.pipeline.migrator.task.completed.v1");
     assert_eq!(Topic::DsPipelineMigratorTaskFailed.to_string(), "ds.pipeline.migrator.task.failed.v1");
     assert_eq!(Topic::DsPipelineMigratorMetricCreated.to_string(), "ds.pipeline.migrator.metric.created.v1");
+
+    // DS Pipeline Synchronizer Job Events
+    assert_eq!(Topic::DsPipelineSynchronizerJobRequested.to_string(), "ds.pipeline.synchronizer.job.requested.v1");
+    assert_eq!(Topic::DsPipelineSynchronizerJobQueued.to_string(), "ds.pipeline.synchronizer.job.queued.v1");
+    assert_eq!(Topic::DsPipelineSynchronizerJobStarted.to_string(), "ds.pipeline.synchronizer.job.started.v1");
+    assert_eq!(Topic::DsPipelineSynchronizerJobCompleted.to_string(), "ds.pipeline.synchronizer.job.completed.v1");
+    assert_eq!(Topic::DsPipelineSynchronizerJobFailed.to_string(), "ds.pipeline.synchronizer.job.failed.v1");
 
     // DS Pipeline Synchronizer Task Events
     assert_eq!(Topic::DsPipelineSynchronizerTaskRequested.to_string(), "ds.pipeline.synchronizer.task.requested.v1");
@@ -98,6 +114,14 @@ fn test_topic_names() {
     assert_eq!(Topic::DsPipelineCloneJobStarted.to_string(), "ds.pipeline.clone.job.started.v1");
     assert_eq!(Topic::DsPipelineCloneJobCompleted.to_string(), "ds.pipeline.clone.job.completed.v1");
     assert_eq!(Topic::DsPipelineCloneJobFailed.to_string(), "ds.pipeline.clone.job.failed.v1");
+    assert_eq!(Topic::DsPipelineCloneMetricCreated.to_string(), "ds.pipeline.clone.metric.created.v1");
+
+    // DS Pipeline Clone Task Events
+    assert_eq!(Topic::DsPipelineCloneTaskRequested.to_string(), "ds.pipeline.clone.task.requested.v1");
+    assert_eq!(Topic::DsPipelineCloneTaskQueued.to_string(), "ds.pipeline.clone.task.queued.v1");
+    assert_eq!(Topic::DsPipelineCloneTaskStarted.to_string(), "ds.pipeline.clone.task.started.v1");
+    assert_eq!(Topic::DsPipelineCloneTaskCompleted.to_string(), "ds.pipeline.clone.task.completed.v1");
+    assert_eq!(Topic::DsPipelineCloneTaskFailed.to_string(), "ds.pipeline.clone.task.failed.v1");
     assert_eq!(Topic::DsPipelineCloneMetricCreated.to_string(), "ds.pipeline.clone.metric.created.v1");
 
     // DS Workflow Pipeline Job Events
