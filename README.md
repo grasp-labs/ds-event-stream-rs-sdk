@@ -1,6 +1,7 @@
 # DS Event Stream Rust SDK
 
 [![Crates.io version](https://img.shields.io/crates/v/ds-event-stream-rs-sdk.svg)](https://crates.io/crates/ds-event-stream-rs-sdk)
+[![Documentation](https://docs.rs/ds-event-stream-rs-sdk/badge.svg)](https://docs.rs/ds-event-stream-rs-sdk)
 [![License: MIT OR Apache-2.0](https://img.shields.io/badge/License-MIT%20OR%20Apache--2.0-blue.svg)](https://opensource.org/licenses/MIT)
 [![Rust](https://img.shields.io/badge/rust-1.76%2B-blue.svg)](https://www.rust-lang.org)
 
