@@ -301,7 +301,7 @@ pub enum Topic {
     DsCoreBillingUsageCreated,
 
     // All Topics
-    #[strum(serialize = "*")]
+    #[strum(serialize = "^.*")]
     AllTopics,
 }
 

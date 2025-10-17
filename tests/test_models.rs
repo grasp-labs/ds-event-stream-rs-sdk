@@ -164,7 +164,7 @@ fn test_topic_names() {
     assert_eq!(Topic::DsCoreBillingUsageCreated.to_string(), "ds.core.billing.usage.created.v1");
 
     // All Topics
-    assert_eq!(Topic::AllTopics.to_string(), "*");
+    assert_eq!(Topic::AllTopics.to_string(), "^.*");
 }
 
 #[test]
