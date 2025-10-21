@@ -164,7 +164,29 @@ fn test_topic_names() {
     assert_eq!(Topic::DsCoreBillingUsageCreated.to_string(), "ds.core.billing.usage.created.v1");
 
     // All Topics
-    assert_eq!(Topic::AllTopics.to_string(), "^(?!__).*");
+    assert!(Topic::get_all_topics().len() >= 74);
+}
+
+#[test]
+fn test_topic_filtering() {
+    // Test regex pattern filtering
+    let pipeline_topics = Topic::filter_by_pattern(r"ds\.pipeline\.").unwrap();
+    assert!(!pipeline_topics.is_empty());
+    assert!(pipeline_topics.len() > 10);
+
+    // Test complex regex pattern
+    let job_topics = Topic::filter_by_pattern(r".*\.job\.(requested|started|completed|failed)\.v1$").unwrap();
+    assert!(!job_topics.is_empty());
+
+    // Test metric topics
+    let metric_topics = Topic::filter_by_pattern(r".*\.metric\.created\.v1$").unwrap();
+    assert!(!metric_topics.is_empty());
+    assert!(metric_topics.len() >= 4);
+
+    // Test all topics
+    let topics = Topic::filter_by_pattern(r".*\.v1$").unwrap();
+    assert!(!topics.is_empty());
+    assert!(topics.len() >= 74);
 }
 
 #[test]

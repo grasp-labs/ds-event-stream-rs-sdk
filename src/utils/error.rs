@@ -23,6 +23,10 @@ pub enum UtilsError {
     /// No topics found for the client
     #[error("No topics found for clientId: {client_id}")]
     TopicsNotFound { client_id: String },
+
+    /// Regex error
+    #[error("Regex error: {0}")]
+    Regex(#[from] regex::Error),
 }
 
 // endregion: --> UtilsError
