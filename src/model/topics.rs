@@ -300,8 +300,8 @@ pub enum Topic {
     #[strum(serialize = "ds.core.billing.usage.created.v1")]
     DsCoreBillingUsageCreated,
 
-    // All Topics
-    #[strum(serialize = "^.*")]
+    // All Topics (excluding system topics starting with __)
+    #[strum(serialize = "^(?!__).*")]
     AllTopics,
 }
 
