@@ -335,7 +335,7 @@ impl Topic {
     /// assert!(!pipeline_topics.is_empty());
     /// ```
     pub fn filter_by_pattern(pattern: &str) -> Result<Vec<Topic>, UtilsError> {
-        let regex = Regex::new(pattern).map_err(UtilsError::Regex)?;
+        let regex = Regex::new(pattern)?;
         let topics = Self::iter().filter(|topic| regex.is_match(topic.as_ref())).collect();
         Ok(topics)
     }
