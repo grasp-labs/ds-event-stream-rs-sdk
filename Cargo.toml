@@ -1,6 +1,6 @@
 [package]
 name = "ds-event-stream-rs-sdk"
-version = "0.2.2"
+version = "0.3.0"
 edition = "2021"
 rust-version = "1.76.0"
 description = "A comprehensive Rust SDK for working with the DS Event Stream, providing high-level abstractions for producing and consuming events from Kafka"
@@ -22,6 +22,7 @@ serde = { version = "1.0.224", features = ["derive"] }
 serde_json = "1.0"
 serde_path_to_error = "0.1"
 strum = { version = "0.27", features = ["derive"] }
+regex = "1.11"
 
 rdkafka = { version = "0.38.0", features = ["cmake-build", "sasl", "tokio"] }
 tokio-stream = { version = "0.1.17" }

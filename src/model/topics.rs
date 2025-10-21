@@ -14,7 +14,10 @@
 //! assert_eq!(topic.to_string(), "ds.pipeline..job.requested.v1");
 //! ```
 
-use strum::{AsRefStr, Display, EnumString};
+use regex::Regex;
+use strum::{AsRefStr, Display, EnumIter, EnumString, IntoEnumIterator};
+
+use crate::utils::error::UtilsError;
 
 // region: --> Topic
 
@@ -114,7 +117,7 @@ use strum::{AsRefStr, Display, EnumString};
 ///
 /// * `DsCoreBillingUsageCreated` - The event when a core billing usage is created.
 
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Display, AsRefStr, EnumString)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Display, AsRefStr, EnumString, EnumIter)]
 pub enum Topic {
     // IDP Identity User Events
     #[strum(serialize = "idp.identity..user.created.v1")]
@@ -299,10 +302,43 @@ pub enum Topic {
     // DS Core Billing Events
     #[strum(serialize = "ds.core.billing.usage.created.v1")]
     DsCoreBillingUsageCreated,
+}
 
-    // All Topics (excluding system topics starting with __)
-    #[strum(serialize = "^(?!__).*")]
-    AllTopics,
+impl Topic {
+    /// Get all the topics for the DS Event Stream.
+    ///
+    /// # Returns
+    /// A vector of all topics for the DS Event Stream.
+    ///
+    /// # Example
+    /// ```
+    /// use ds_event_stream_rs_sdk::model::topics::Topic;
+    /// let topics = Topic::get_all_topics();
+    /// assert!(!topics.is_empty());
+    /// ```
+    pub fn get_all_topics() -> Vec<Topic> {
+        Self::iter().collect()
+    }
+
+    /// Filter topics by regex pattern.
+    ///
+    /// # Arguments
+    /// * `pattern` - A regex pattern to match against topic names
+    ///
+    /// # Returns
+    /// A vector of topics that match the pattern
+    ///
+    /// # Example
+    /// ```
+    /// use ds_event_stream_rs_sdk::model::topics::Topic;
+    /// let pipeline_topics = Topic::filter_by_pattern(r"ds\.pipeline\.").unwrap();
+    /// assert!(!pipeline_topics.is_empty());
+    /// ```
+    pub fn filter_by_pattern(pattern: &str) -> Result<Vec<Topic>, UtilsError> {
+        let regex = Regex::new(pattern).map_err(UtilsError::Regex)?;
+        let topics = Self::iter().filter(|topic| regex.is_match(topic.as_ref())).collect();
+        Ok(topics)
+    }
 }
 
 // endregion: --> Topic
