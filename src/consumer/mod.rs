@@ -123,6 +123,43 @@ pub struct KafkaConsumer {
 impl KafkaConsumer {
     /* ---- constructors ------------------------------------------------ */
 
+    /// Get the default configuration.
+    ///
+    /// # Arguments
+    ///
+    /// * `bootstrap_servers` - The bootstrap servers to use for the consumer
+    /// * `group_id` - The group id to use for the consumer
+    /// * `credentials` - The credentials to use for authentication
+    ///
+    /// # Returns
+    ///
+    /// * `ClientConfig` - The configured client config
+    ///
+    pub fn get_default_config(
+        bootstrap_servers: &str,
+        group_id: &str,
+        credentials: &ClientCredentials,
+    ) -> ClientConfig {
+        let mut config = ClientConfig::new();
+        config
+            .set("group.id", group_id)
+            .set("bootstrap.servers", bootstrap_servers)
+            .set("session.timeout.ms", "6000")
+            .set("enable.partition.eof", "false")
+            .set("heartbeat.interval.ms", "3000")
+            .set("max.poll.interval.ms", "300000")
+            .set("auto.offset.reset", "earliest")
+            .set("enable.auto.commit", "false")
+            .set("fetch.min.bytes", "1")
+            .set("max.partition.fetch.bytes", "1048576")
+            .set("security.protocol", "SASL_PLAINTEXT")
+            .set("sasl.mechanism", "SCRAM-SHA-512")
+            .set("sasl.username", credentials.username.clone())
+            .set("sasl.password", credentials.password.clone())
+            .set_log_level(RDKafkaLogLevel::Info);
+        config
+    }
+
     /// Explicit configuration.
     ///
     /// # Arguments
@@ -172,22 +209,8 @@ impl KafkaConsumer {
         group_id: &str,
         credentials: &ClientCredentials,
     ) -> Result<Self> {
-        let inner: StreamConsumer<_> = ClientConfig::new()
-            .set("group.id", group_id)
-            .set("bootstrap.servers", bootstrap_servers)
-            .set("session.timeout.ms", "6000")
-            .set("enable.partition.eof", "false")
-            .set("heartbeat.interval.ms", "3000")
-            .set("max.poll.interval.ms", "300000")
-            .set("auto.offset.reset", "earliest")
-            .set("enable.auto.commit", "false")
-            .set("fetch.min.bytes", "1")
-            .set("max.partition.fetch.bytes", "1048576")
-            .set("security.protocol", "SASL_PLAINTEXT")
-            .set("sasl.mechanism", "SCRAM-SHA-512")
-            .set("sasl.username", credentials.username.clone())
-            .set("sasl.password", credentials.password.clone())
-            .set_log_level(RDKafkaLogLevel::Info)
+        let config = Self::get_default_config(bootstrap_servers, group_id, credentials);
+        let inner: StreamConsumer<_> = config
             .create_with_context(TracingContext)
             .map_err(ConsumerError::Kafka)?;
 
@@ -195,6 +218,40 @@ impl KafkaConsumer {
         inner.subscribe(&topic_refs).map_err(ConsumerError::Kafka)?;
 
         info!(topics = ?topic_refs, "Kafka consumer initialised");
+        Ok(Self { inner })
+    }
+
+    /// Default configuration with string topics.
+    ///
+    /// # Arguments
+    ///
+    /// * `topics` - The topics to subscribe to
+    /// * `group_id` - The group id to use for the consumer
+    /// * `bootstrap_servers` - The bootstrap servers to use for the consumer
+    /// * `credentials` - The credentials to use for authentication
+    ///
+    /// # Returns
+    ///
+    /// * `Result<Self, SDKError>` - The result of the operation
+    ///
+    /// # Errors
+    ///
+    /// * [`SDKError::Consumer`] - If the consumer fails to create.
+    ///
+    pub fn default_with_strings(
+        bootstrap_servers: &str,
+        topics: &[&str],
+        group_id: &str,
+        credentials: &ClientCredentials,
+    ) -> Result<Self> {
+        let config = Self::get_default_config(bootstrap_servers, group_id, credentials);
+        let inner: StreamConsumer<_> = config
+            .create_with_context(TracingContext)
+            .map_err(ConsumerError::Kafka)?;
+
+        inner.subscribe(topics).map_err(ConsumerError::Kafka)?;
+
+        info!(topics = ?topics, "Kafka consumer initialised");
         Ok(Self { inner })
     }
 
