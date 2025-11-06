@@ -30,9 +30,9 @@ use error::UtilsError;
 // region: --> helpers
 
 // Bootstrap server constants
-const DEV_INTERNAL_BOOTSTRAP: &str = "kafka-broker-0.kafka-broker-headless.kafka-dev.svc.cluster.local:9092";
+const DEV_INTERNAL_BOOTSTRAP: &str = "kafka.kafka-dev.svc.cluster.local:9092";
 const DEV_EXTERNAL_BOOTSTRAP: &str = "b0.dev.kafka.ds.local:9095";
-const PROD_INTERNAL_BOOTSTRAP: &str = "kafka-broker-0.kafka-broker-headless.kafka.svc.cluster.local:9092,kafka-broker-1.kafka-broker-headless.kafka.svc.cluster.local:9092,kafka-broker-2.kafka-broker-headless.kafka.svc.cluster.local:9092";
+const PROD_INTERNAL_BOOTSTRAP: &str = "kafka.kafka.svc.cluster.local:9092";
 const PROD_EXTERNAL_BOOTSTRAP: &str = "b0.kafka.ds.local:9095,b1.kafka.ds.local:9095,b2.kafka.ds.local:9095";
 
 /// Client credentials for Kafka authentication.
