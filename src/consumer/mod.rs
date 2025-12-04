@@ -166,8 +166,8 @@ impl KafkaConsumer {
             .set("sasl.password", credentials.password.clone())
             .set_log_level(RDKafkaLogLevel::Info);
 
-        if let Ok(task_arn) = std::env::var("KAFKA_GROUP_INSTANCE_ID") {
-            config.set("group.instance.id", task_arn);
+        if let Ok(group_instance_id) = std::env::var("KAFKA_GROUP_INSTANCE_ID") {
+            config.set("group.instance.id", group_instance_id);
         }
 
         config
