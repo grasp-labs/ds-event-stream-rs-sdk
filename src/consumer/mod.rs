@@ -154,7 +154,7 @@ impl KafkaConsumer {
             .set("bootstrap.servers", bootstrap_servers)
             .set("session.timeout.ms", "30000")
             .set("enable.partition.eof", "false")
-            .set("heartbeat.interval.ms", "10000")
+            .set("heartbeat.interval.ms", "9000")
             .set("max.poll.interval.ms", "300000")
             .set("auto.offset.reset", "earliest")
             .set("enable.auto.commit", "false")
