@@ -42,30 +42,15 @@ fn test_bootstrap_servers_sandbox() {
 #[test]
 fn test_bootstrap_servers_all_environments() {
     // Test Development
-    assert_eq!(
-        get_bootstrap_servers(Environment::Development, true),
-        "kafka.kafka-dev.svc.cluster.local:9092"
-    );
-    assert_eq!(
-        get_bootstrap_servers(Environment::Development, false),
-        "b0.dev.kafka.ds.local:9095"
-    );
+    assert_eq!(get_bootstrap_servers(Environment::Development, true), "kafka.kafka-dev.svc.cluster.local:9092");
+    assert_eq!(get_bootstrap_servers(Environment::Development, false), "b0.dev.kafka.ds.local:9095");
 
     // Test Sandbox
-    assert_eq!(
-        get_bootstrap_servers(Environment::Sandbox, true),
-        "kafka.kafka-sandbox.svc.cluster.local:9092"
-    );
-    assert_eq!(
-        get_bootstrap_servers(Environment::Sandbox, false),
-        "b0.sandbox.kafka.ds.local:9095"
-    );
+    assert_eq!(get_bootstrap_servers(Environment::Sandbox, true), "kafka.kafka-sandbox.svc.cluster.local:9092");
+    assert_eq!(get_bootstrap_servers(Environment::Sandbox, false), "b0.sandbox.kafka.ds.local:9095");
 
     // Test Production
-    assert_eq!(
-        get_bootstrap_servers(Environment::Production, true),
-        "kafka.kafka.svc.cluster.local:9092"
-    );
+    assert_eq!(get_bootstrap_servers(Environment::Production, true), "kafka.kafka.svc.cluster.local:9092");
     assert_eq!(
         get_bootstrap_servers(Environment::Production, false),
         "b0.kafka.ds.local:9095,b1.kafka.ds.local:9095,b2.kafka.ds.local:9095"
