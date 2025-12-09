@@ -32,6 +32,8 @@ use error::UtilsError;
 // Bootstrap server constants
 const DEV_INTERNAL_BOOTSTRAP: &str = "kafka.kafka-dev.svc.cluster.local:9092";
 const DEV_EXTERNAL_BOOTSTRAP: &str = "b0.dev.kafka.ds.local:9095";
+const SANDBOX_INTERNAL_BOOTSTRAP: &str = "kafka.kafka-sandbox.svc.cluster.local:9092";
+const SANDBOX_EXTERNAL_BOOTSTRAP: &str = "b0.sandbox.kafka.ds.local:9095";
 const PROD_INTERNAL_BOOTSTRAP: &str = "kafka.kafka.svc.cluster.local:9092";
 const PROD_EXTERNAL_BOOTSTRAP: &str = "b0.kafka.ds.local:9095,b1.kafka.ds.local:9095,b2.kafka.ds.local:9095";
 
@@ -61,6 +63,7 @@ pub struct ClientCredentials {
 #[derive(Debug, Clone)]
 pub enum Environment {
     Development,
+    Sandbox,
     Production,
 }
 
@@ -82,6 +85,13 @@ pub fn get_bootstrap_servers(env: Environment, use_internal_hostnames: bool) -> 
                 DEV_INTERNAL_BOOTSTRAP.to_string()
             } else {
                 DEV_EXTERNAL_BOOTSTRAP.to_string()
+            }
+        }
+        Environment::Sandbox => {
+            if use_internal_hostnames {
+                SANDBOX_INTERNAL_BOOTSTRAP.to_string()
+            } else {
+                SANDBOX_EXTERNAL_BOOTSTRAP.to_string()
             }
         }
         Environment::Production => {
