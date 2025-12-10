@@ -1,10 +1,10 @@
 # DS Event Stream Rust SDK
 
+[![Rust](https://img.shields.io/badge/rust-1.76%2B-blue.svg)](https://www.rust-lang.org)
 [![Crates.io version](https://img.shields.io/crates/v/ds-event-stream-rs-sdk.svg)](https://crates.io/crates/ds-event-stream-rs-sdk)
 [![Documentation](https://docs.rs/ds-event-stream-rs-sdk/badge.svg)](https://docs.rs/ds-event-stream-rs-sdk)
+[![CI](https://github.com/grasp-labs/ds-event-stream-rs-sdk/actions/workflows/ci.yaml/badge.svg)](https://github.com/grasp-labs/ds-event-stream-rs-sdk/actions/workflows/ci.yaml)
 [![License: Apache-2.0](https://img.shields.io/badge/License-Apache--2.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
-[![Rust](https://img.shields.io/badge/rust-1.76%2B-blue.svg)](https://www.rust-lang.org)
-[![Tests](https://github.com/grasp-labs/ds-event-stream-rs-sdk/actions/workflows/ci.yaml/badge.svg)](https://github.com/grasp-labs/ds-event-stream-rs-sdk/actions/workflows/ci.yaml)
 
 A Rust SDK for interacting with the DS Event Stream via Kafka. This library provides a clean, async interface for producing and consuming events from the DS Event Stream.
 
