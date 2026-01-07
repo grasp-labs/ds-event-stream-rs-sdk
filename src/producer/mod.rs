@@ -142,6 +142,27 @@ impl KafkaProducer {
         Ok(Self { inner })
     }
 
+    /// Validates an event before sending.
+    ///
+    /// # Arguments
+    ///
+    /// * `payload` - The event to validate
+    ///
+    /// # Returns
+    ///
+    /// * `Result<()>` - Ok if valid, error otherwise
+    ///
+    /// # Errors
+    ///
+    /// * [`SDKError::Producer`] - If validation fails (e.g., empty event_source)
+    ///
+    fn validate_event(&self, payload: &EventStream) -> Result<()> {
+        if payload.event_source.is_empty() {
+            return Err(SDKError::Producer(ProducerError::ValidationError("event_source cannot be empty".to_string())));
+        }
+        Ok(())
+    }
+
     /// Sends a key‑ed JSON message to **`topic`**.
     ///
     /// * `payload` must be an [`EventStream`] object that implements [`serde::Serialize`].
@@ -164,7 +185,7 @@ impl KafkaProducer {
     ///
     /// Errors
     ///
-    /// * [`SDKError::Producer`] - If the producer fails to send the message.
+    /// * [`SDKError::Producer`] - If the producer fails to send the message or validation fails.
     ///
     pub async fn send_event(
         &self,
@@ -173,6 +194,12 @@ impl KafkaProducer {
         payload: &EventStream,
         queue_timeout: Option<Duration>,
     ) -> Result<()> {
+        // Validate event before sending
+        if let Err(e) = self.validate_event(payload) {
+            error!(error = %e, "event validation failed");
+            return Err(e);
+        }
+
         let topic_name = topic.to_string();
         let payload_json = self.serialize_message(payload)?;
 
