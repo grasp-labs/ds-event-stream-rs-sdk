@@ -23,6 +23,10 @@ pub enum ProducerError {
     /// Errors from utility operations (bootstrap servers, etc.)
     #[error("Utils error: {0}")]
     Utils(#[from] crate::utils::error::UtilsError),
+
+    /// Event validation errors
+    #[error("Validation error: {0}")]
+    ValidationError(String),
 }
 
 // endregion: --> ProducerError
