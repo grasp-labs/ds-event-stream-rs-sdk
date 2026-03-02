@@ -129,6 +129,14 @@ impl KafkaConsumer {
     /// * `group_id` - The group id to use for the consumer
     /// * `credentials` - The credentials to use for authentication
     ///
+    /// # Environment Variables
+    ///
+    /// * `KAFKA_GROUP_INSTANCE_ID` - Optional. If set, configures the consumer
+    ///   with a static group instance ID, enabling static group membership.
+    ///   This prevents unnecessary rebalances when a consumer reconnects after
+    ///   a transient network issue. If not set, the consumer uses dynamic
+    ///   group membership.
+    ///
     /// # Returns
     ///
     /// * `ClientConfig` - The configured client config
@@ -142,9 +150,9 @@ impl KafkaConsumer {
         config
             .set("group.id", group_id)
             .set("bootstrap.servers", bootstrap_servers)
-            .set("session.timeout.ms", "6000")
+            .set("session.timeout.ms", "30000")
             .set("enable.partition.eof", "false")
-            .set("heartbeat.interval.ms", "3000")
+            .set("heartbeat.interval.ms", "9000")
             .set("max.poll.interval.ms", "300000")
             .set("auto.offset.reset", "earliest")
             .set("enable.auto.commit", "false")
@@ -155,6 +163,11 @@ impl KafkaConsumer {
             .set("sasl.username", credentials.username.clone())
             .set("sasl.password", credentials.password.clone())
             .set_log_level(RDKafkaLogLevel::Info);
+
+        if let Ok(group_instance_id) = std::env::var("KAFKA_GROUP_INSTANCE_ID") {
+            config.set("group.instance.id", group_instance_id);
+        }
+
         config
     }
 
