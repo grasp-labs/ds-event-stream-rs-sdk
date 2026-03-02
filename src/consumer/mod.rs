@@ -18,7 +18,7 @@
 //! use ds_event_stream_rs_sdk::utils::{get_bootstrap_servers, Environment, ClientCredentials};
 //!
 //! use tokio_stream::StreamExt;
-//! use tracing::{info, error};
+//! use tracing::{debug, error};
 //!
 //! #[tokio::main]
 //! async fn main() -> Result<(), SDKError> {
