@@ -14,7 +14,6 @@
 //! ### Example
 //! ```no_run
 //! use ds_event_stream_rs_sdk::consumer::KafkaConsumer;
-//! use ds_event_stream_rs_sdk::model::topics::Topic;
 //! use ds_event_stream_rs_sdk::error::{Result, SDKError};
 //! use ds_event_stream_rs_sdk::utils::{get_bootstrap_servers, Environment, ClientCredentials};
 //!
@@ -26,7 +25,7 @@
 //!     let bootstrap_servers = get_bootstrap_servers(Environment::Development, false);
 //!     let credentials = ClientCredentials { username: "username".to_string(), password: "password".to_string() };
 //!
-//!     let consumer = KafkaConsumer::default(&bootstrap_servers, &[Topic::DsPipelineJobRequested], "group-id", &credentials)?;
+//!     let consumer = KafkaConsumer::default(&bootstrap_servers, &["ds.pipeline.job.requested.v1"], "group-id", &credentials)?;
 //!     let mut event_stream = consumer.event_stream();
 //!
 //!     while let Some(next) = event_stream.next().await {
@@ -53,7 +52,6 @@ use tokio_stream::{Stream, StreamExt};
 use tracing::{debug, error, info};
 
 use crate::error::{Result, SDKError};
-use crate::model::topics::Topic;
 use crate::model::v1::EventStream;
 use crate::utils::ClientCredentials;
 
@@ -188,15 +186,14 @@ impl KafkaConsumer {
     ///
     /// * [`SDKError::Consumer`] - If the consumer fails to create.
     ///
-    pub fn new(topics: &[Topic], config: ClientConfig) -> Result<Self> {
+    pub fn new(topics: &[&str], config: ClientConfig) -> Result<Self> {
         let inner: StreamConsumer<_> = config
             .create_with_context(TracingContext)
             .map_err(ConsumerError::Kafka)?;
 
-        let topic_refs: Vec<&str> = topics.iter().map(|t| t.as_ref()).collect();
-        inner.subscribe(&topic_refs).map_err(ConsumerError::Kafka)?;
+        inner.subscribe(topics).map_err(ConsumerError::Kafka)?;
 
-        info!(topics = ?topic_refs, "Kafka consumer initialised");
+        info!(topics = ?topics, "Kafka consumer initialised");
         Ok(Self { inner })
     }
 
@@ -217,41 +214,6 @@ impl KafkaConsumer {
     /// * [`SDKError::Consumer`] - If the consumer fails to create.
     ///
     pub fn default(
-        bootstrap_servers: &str,
-        topics: &[Topic],
-        group_id: &str,
-        credentials: &ClientCredentials,
-    ) -> Result<Self> {
-        let config = Self::get_default_config(bootstrap_servers, group_id, credentials);
-        let inner: StreamConsumer<_> = config
-            .create_with_context(TracingContext)
-            .map_err(ConsumerError::Kafka)?;
-
-        let topic_refs: Vec<&str> = topics.iter().map(|t| t.as_ref()).collect();
-        inner.subscribe(&topic_refs).map_err(ConsumerError::Kafka)?;
-
-        info!(topics = ?topic_refs, "Kafka consumer initialised");
-        Ok(Self { inner })
-    }
-
-    /// Default configuration with string topics.
-    ///
-    /// # Arguments
-    ///
-    /// * `topics` - The topics to subscribe to
-    /// * `group_id` - The group id to use for the consumer
-    /// * `bootstrap_servers` - The bootstrap servers to use for the consumer
-    /// * `credentials` - The credentials to use for authentication
-    ///
-    /// # Returns
-    ///
-    /// * `Result<Self, SDKError>` - The result of the operation
-    ///
-    /// # Errors
-    ///
-    /// * [`SDKError::Consumer`] - If the consumer fails to create.
-    ///
-    pub fn default_with_strings(
         bootstrap_servers: &str,
         topics: &[&str],
         group_id: &str,

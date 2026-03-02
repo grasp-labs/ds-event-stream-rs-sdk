@@ -13,7 +13,6 @@ A Rust SDK for interacting with the DS Event Stream via Kafka. This library prov
 - **Kafka Producer** - Send events to the DS Event Stream with structured logging
 - **Kafka Consumer** - Consume events from the DS Event Stream with stream-based processing
 - **Event Models** - Pre-defined event structures for DS Event Stream (EventStream v1)
-- **Topic Management** - Predefined topic constants and utilities
 - **Admin Utilities** - Helper functions for Kafka cluster management
 - **Async Support** - Built on Tokio for high-performance async operations
 - **Error Handling** - Comprehensive error types for robust applications
@@ -41,7 +40,6 @@ cargo add ds-event-stream-rs-sdk
 ```rust
 use ds_event_stream_rs_sdk::producer::KafkaProducer;
 use ds_event_stream_rs_sdk::model::v1::EventStream;
-use ds_event_stream_rs_sdk::model::topics::Topic;
 use ds_event_stream_rs_sdk::utils::{get_bootstrap_servers, Environment, ClientCredentials};
 use tracing::info;
 use uuid::Uuid;
@@ -80,7 +78,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         tags: None,
     };
 
-    producer.send_event(&Topic::DsPipelineJobRequested, "user-42", &event, None).await?;
+    producer.send_event("ds.pipeline.job.requested.v1", "user-42", &event, None).await?;
     info!("Event sent to Kafka");
     Ok(())
 }
@@ -90,7 +88,6 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
 ```rust
 use ds_event_stream_rs_sdk::consumer::KafkaConsumer;
-use ds_event_stream_rs_sdk::model::topics::Topic;
 use ds_event_stream_rs_sdk::utils::{get_bootstrap_servers, Environment, ClientCredentials};
 use tokio_stream::StreamExt;
 use rdkafka::message::Message;
@@ -106,7 +103,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     // Initialize consumer
     let consumer = KafkaConsumer::default(
         &bootstrap_servers,
-        &[Topic::DsPipelineJobRequested],
+        &["ds.pipeline.job.requested.v1"],
         "group-id",
         &credentials
     )?;

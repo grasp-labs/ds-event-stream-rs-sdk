@@ -62,7 +62,7 @@ cargo run --example consumer
 
 Use clear, descriptive commit messages:
 
-```
+```text
 feat: add support for custom topic configuration
 fix: resolve memory leak in consumer stream
 docs: update README with new examples
