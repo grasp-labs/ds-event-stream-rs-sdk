@@ -14,7 +14,7 @@
 //! ### Example
 //! ```no_run
 //! use ds_event_stream_rs_sdk::producer::KafkaProducer;
-//! use ds_event_stream_rs_sdk::model::{EventStream, topics::Topic};
+//! use ds_event_stream_rs_sdk::model::EventStream;
 //! use ds_event_stream_rs_sdk::error::Result;
 //! use ds_event_stream_rs_sdk::utils::{get_bootstrap_servers, Environment, ClientCredentials};
 //! use uuid::Uuid;
@@ -49,7 +49,7 @@
 //!         metadata: None,
 //!         tags: None,
 //!     };
-//!     producer.send_event(&Topic::DsPipelineJobRequested, "user-42", &payload, None).await?;
+//!     producer.send_event("ds.pipeline.job.requested.v1", "user-42", &payload, None).await?;
 //!     Ok(())
 //! }
 //! ```
@@ -61,10 +61,9 @@ use rdkafka::{
     config::ClientConfig,
     producer::{FutureProducer, FutureRecord},
 };
-use tracing::{error, info};
+use tracing::{debug, error};
 
 use crate::error::{Result, SDKError};
-use crate::model::topics::Topic;
 use crate::model::v1::EventStream;
 use crate::utils::ClientCredentials;
 
@@ -120,7 +119,7 @@ impl KafkaProducer {
     /// * [`SDKError::Producer`] - If the producer fails to create.
     ///
     pub fn default(bootstrap_servers: &str, credentials: &ClientCredentials) -> Result<Self> {
-        let inner: FutureProducer = ClientConfig::new()
+        let config = ClientConfig::new()
             .set("bootstrap.servers", bootstrap_servers)
             .set("acks", "all")
             .set("retries", "3")
@@ -135,11 +134,10 @@ impl KafkaProducer {
             .set("sasl.mechanisms", "SCRAM-SHA-512")
             .set("sasl.username", credentials.username.clone())
             .set("sasl.password", credentials.password.clone())
-            .create()
-            .map_err(ProducerError::Kafka)?;
+            .to_owned();
 
-        info!(servers = %bootstrap_servers, "Kafka producer initialised");
-        Ok(Self { inner })
+        debug!(servers = %bootstrap_servers, "Kafka producer initialised");
+        Self::new(config)
     }
 
     /// Sends a key‑ed JSON message to **`topic`**.
@@ -168,29 +166,30 @@ impl KafkaProducer {
     ///
     pub async fn send_event(
         &self,
-        topic: &Topic,
-        key: &str,
+        topic: impl AsRef<str>,
+        key: impl AsRef<str>,
         payload: &EventStream,
         queue_timeout: Option<Duration>,
     ) -> Result<()> {
-        let topic_name = topic.to_string();
+        let topic = topic.as_ref();
+        let key = key.as_ref();
         let payload_json = self.serialize_message(payload)?;
 
-        let record = FutureRecord::to(&topic_name).payload(&payload_json).key(key);
+        let record = FutureRecord::to(topic).payload(&payload_json).key(key);
         let timeout = queue_timeout.unwrap_or(Duration::from_millis(5000));
 
         match self.inner.send(record, timeout).await {
             Ok(delivery) => {
-                info!(
+                debug!(
                     partition = delivery.partition,
                     offset = delivery.offset,
                     "message produced to topic: {}",
-                    topic_name
+                    topic
                 );
                 Ok(())
             }
             Err((err, _msg)) => {
-                error!(error = %err, "failed to produce message to topic: {}", topic_name);
+                error!(error = %err, "failed to produce message to topic: {}", topic);
                 Err(SDKError::Producer(ProducerError::Kafka(err)))
             }
         }

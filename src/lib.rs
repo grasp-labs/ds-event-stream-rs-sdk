@@ -8,7 +8,6 @@
 //! - **Event Models**: Type-safe event structures with serialization support
 //! - **Kafka Producer**: Async producer for sending events to Kafka topics
 //! - **Kafka Consumer**: Stream-based consumer for processing events
-//! - **Topic Management**: Predefined topic constants and utilities
 //! - **Admin Utilities**: Helper functions for Kafka cluster management
 //!
 //! ## Quick Start
@@ -23,7 +22,7 @@
 //!
 //! ```no_run
 //! use ds_event_stream_rs_sdk::{
-//!     model::{EventStream, topics::Topic},
+//!     model::EventStream,
 //!     producer::KafkaProducer,
 //!     consumer::KafkaConsumer,
 //! };
@@ -51,9 +50,9 @@
 //!     let credentials = ClientCredentials { username: "username".to_string(), password: "password".to_string() };
 //!
 //!     let producer = KafkaProducer::default(&bootstrap_servers, &credentials)?;
-//!     producer.send_event(&Topic::IdpIdentityUserCreated, "user-123", &event, None).await?;
+//!     producer.send_event("idp.identity.user.created.v1", "user-123", &event, None).await?;
 //!
-//!     let consumer = KafkaConsumer::default(&bootstrap_servers, &[Topic::IdpIdentityUserCreated], "group-id", &credentials)?;
+//!     let consumer = KafkaConsumer::default(&bootstrap_servers, &["idp.identity.user.created.v1"], "group-id", &credentials)?;
 //!     let mut stream = consumer.stream();
 //!
 //!     while let Some(result) = stream.next().await {
@@ -82,7 +81,7 @@
 //!
 //! ## Modules
 //!
-//! - [`model`]: Event data structures and topic definitions
+//! - [`model`]: Event data structures
 //! - [`producer`]: Kafka producer for sending events
 //! - [`consumer`]: Kafka consumer for receiving events
 //! - [`utils`]: Administrative utilities for Kafka management

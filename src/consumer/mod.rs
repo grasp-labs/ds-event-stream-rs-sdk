@@ -14,24 +14,23 @@
 //! ### Example
 //! ```no_run
 //! use ds_event_stream_rs_sdk::consumer::KafkaConsumer;
-//! use ds_event_stream_rs_sdk::model::topics::Topic;
 //! use ds_event_stream_rs_sdk::error::{Result, SDKError};
 //! use ds_event_stream_rs_sdk::utils::{get_bootstrap_servers, Environment, ClientCredentials};
 //!
 //! use tokio_stream::StreamExt;
-//! use tracing::{info, error};
+//! use tracing::{debug, error};
 //!
 //! #[tokio::main]
 //! async fn main() -> Result<(), SDKError> {
 //!     let bootstrap_servers = get_bootstrap_servers(Environment::Development, false);
 //!     let credentials = ClientCredentials { username: "username".to_string(), password: "password".to_string() };
 //!
-//!     let consumer = KafkaConsumer::default(&bootstrap_servers, &[Topic::DsPipelineJobRequested], "group-id", &credentials)?;
+//!     let consumer = KafkaConsumer::default(&bootstrap_servers, &["ds.pipeline.job.requested.v1"], "group-id", &credentials)?;
 //!     let mut event_stream = consumer.event_stream();
 //!
 //!     while let Some(next) = event_stream.next().await {
 //!         match next {
-//!             Ok(event) => info!("Received event: {:?}", event),
+//!             Ok(event) => debug!("Received event: {:?}", event),
 //!             Err(err) => error!("Failed to deserialize event: {}", err),
 //!         }
 //!     }
@@ -50,10 +49,9 @@ use rdkafka::{
 use serde_json::Deserializer;
 use serde_path_to_error::deserialize;
 use tokio_stream::{Stream, StreamExt};
-use tracing::{debug, error, info};
+use tracing::{debug, error};
 
 use crate::error::{Result, SDKError};
-use crate::model::topics::Topic;
 use crate::model::v1::EventStream;
 use crate::utils::ClientCredentials;
 
@@ -131,6 +129,14 @@ impl KafkaConsumer {
     /// * `group_id` - The group id to use for the consumer
     /// * `credentials` - The credentials to use for authentication
     ///
+    /// # Environment Variables
+    ///
+    /// * `KAFKA_GROUP_INSTANCE_ID` - Optional. If set, configures the consumer
+    ///   with a static group instance ID, enabling static group membership.
+    ///   This prevents unnecessary rebalances when a consumer reconnects after
+    ///   a transient network issue. If not set, the consumer uses dynamic
+    ///   group membership.
+    ///
     /// # Returns
     ///
     /// * `ClientConfig` - The configured client config
@@ -144,9 +150,9 @@ impl KafkaConsumer {
         config
             .set("group.id", group_id)
             .set("bootstrap.servers", bootstrap_servers)
-            .set("session.timeout.ms", "6000")
+            .set("session.timeout.ms", "30000")
             .set("enable.partition.eof", "false")
-            .set("heartbeat.interval.ms", "3000")
+            .set("heartbeat.interval.ms", "9000")
             .set("max.poll.interval.ms", "300000")
             .set("auto.offset.reset", "earliest")
             .set("enable.auto.commit", "false")
@@ -157,6 +163,11 @@ impl KafkaConsumer {
             .set("sasl.username", credentials.username.clone())
             .set("sasl.password", credentials.password.clone())
             .set_log_level(RDKafkaLogLevel::Info);
+
+        if let Ok(group_instance_id) = std::env::var("KAFKA_GROUP_INSTANCE_ID") {
+            config.set("group.instance.id", group_instance_id);
+        }
+
         config
     }
 
@@ -175,15 +186,15 @@ impl KafkaConsumer {
     ///
     /// * [`SDKError::Consumer`] - If the consumer fails to create.
     ///
-    pub fn new(topics: &[Topic], config: ClientConfig) -> Result<Self> {
+    pub fn new<T: AsRef<str>>(topics: &[T], config: ClientConfig) -> Result<Self> {
         let inner: StreamConsumer<_> = config
             .create_with_context(TracingContext)
             .map_err(ConsumerError::Kafka)?;
 
-        let topic_refs: Vec<&str> = topics.iter().map(|t| t.as_ref()).collect();
+        let topic_refs: Vec<&str> = topics.iter().map(|topic| topic.as_ref()).collect();
         inner.subscribe(&topic_refs).map_err(ConsumerError::Kafka)?;
 
-        info!(topics = ?topic_refs, "Kafka consumer initialised");
+        debug!(topics = ?topic_refs, "Kafka consumer initialised");
         Ok(Self { inner })
     }
 
@@ -203,56 +214,14 @@ impl KafkaConsumer {
     ///
     /// * [`SDKError::Consumer`] - If the consumer fails to create.
     ///
-    pub fn default(
+    pub fn default<T: AsRef<str>>(
         bootstrap_servers: &str,
-        topics: &[Topic],
+        topics: &[T],
         group_id: &str,
         credentials: &ClientCredentials,
     ) -> Result<Self> {
         let config = Self::get_default_config(bootstrap_servers, group_id, credentials);
-        let inner: StreamConsumer<_> = config
-            .create_with_context(TracingContext)
-            .map_err(ConsumerError::Kafka)?;
-
-        let topic_refs: Vec<&str> = topics.iter().map(|t| t.as_ref()).collect();
-        inner.subscribe(&topic_refs).map_err(ConsumerError::Kafka)?;
-
-        info!(topics = ?topic_refs, "Kafka consumer initialised");
-        Ok(Self { inner })
-    }
-
-    /// Default configuration with string topics.
-    ///
-    /// # Arguments
-    ///
-    /// * `topics` - The topics to subscribe to
-    /// * `group_id` - The group id to use for the consumer
-    /// * `bootstrap_servers` - The bootstrap servers to use for the consumer
-    /// * `credentials` - The credentials to use for authentication
-    ///
-    /// # Returns
-    ///
-    /// * `Result<Self, SDKError>` - The result of the operation
-    ///
-    /// # Errors
-    ///
-    /// * [`SDKError::Consumer`] - If the consumer fails to create.
-    ///
-    pub fn default_with_strings(
-        bootstrap_servers: &str,
-        topics: &[&str],
-        group_id: &str,
-        credentials: &ClientCredentials,
-    ) -> Result<Self> {
-        let config = Self::get_default_config(bootstrap_servers, group_id, credentials);
-        let inner: StreamConsumer<_> = config
-            .create_with_context(TracingContext)
-            .map_err(ConsumerError::Kafka)?;
-
-        inner.subscribe(topics).map_err(ConsumerError::Kafka)?;
-
-        info!(topics = ?topics, "Kafka consumer initialised");
-        Ok(Self { inner })
+        Self::new(topics, config)
     }
 
     /* ---- helpers ----------------------------------------------------- */

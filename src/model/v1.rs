@@ -154,3 +154,25 @@ impl EventStream {
 }
 
 // endregion: --> EventStream
+
+#[cfg(test)]
+mod tests {
+    use super::EventStream;
+    use serde_json::json;
+
+    #[test]
+    fn compute_payload_hash_none_is_empty() {
+        let payload: Option<serde_json::Value> = None;
+        let hash = EventStream::compute_payload_hash(&payload);
+        assert!(hash.is_empty());
+    }
+
+    #[test]
+    fn compute_payload_hash_some_is_deterministic_for_same_payload() {
+        let payload = Some(json!({"a": 1, "b": "two"}));
+        let h1 = EventStream::compute_payload_hash(&payload);
+        let h2 = EventStream::compute_payload_hash(&payload);
+        assert!(!h1.is_empty());
+        assert_eq!(h1, h2);
+    }
+}
