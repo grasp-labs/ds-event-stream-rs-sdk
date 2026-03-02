@@ -14,7 +14,7 @@
 //! ### Example
 //! ```no_run
 //! use ds_event_stream_rs_sdk::producer::KafkaProducer;
-//! use ds_event_stream_rs_sdk::model::{EventStream, topics::Topic};
+//! use ds_event_stream_rs_sdk::model::EventStream;
 //! use ds_event_stream_rs_sdk::error::Result;
 //! use ds_event_stream_rs_sdk::utils::{get_bootstrap_servers, Environment, ClientCredentials};
 //! use uuid::Uuid;
@@ -49,7 +49,7 @@
 //!         metadata: None,
 //!         tags: None,
 //!     };
-//!     producer.send_event(&Topic::DsPipelineJobRequested, "user-42", &payload, None).await?;
+//!     producer.send_event("ds.pipeline.job.requested.v1", "user-42", &payload, None).await?;
 //!     Ok(())
 //! }
 //! ```
@@ -64,7 +64,6 @@ use rdkafka::{
 use tracing::{error, info};
 
 use crate::error::{Result, SDKError};
-use crate::model::topics::Topic;
 use crate::model::v1::EventStream;
 use crate::utils::ClientCredentials;
 
@@ -168,29 +167,23 @@ impl KafkaProducer {
     ///
     pub async fn send_event(
         &self,
-        topic: &Topic,
+        topic: &str,
         key: &str,
         payload: &EventStream,
         queue_timeout: Option<Duration>,
     ) -> Result<()> {
-        let topic_name = topic.to_string();
         let payload_json = self.serialize_message(payload)?;
 
-        let record = FutureRecord::to(&topic_name).payload(&payload_json).key(key);
+        let record = FutureRecord::to(topic).payload(&payload_json).key(key);
         let timeout = queue_timeout.unwrap_or(Duration::from_millis(5000));
 
         match self.inner.send(record, timeout).await {
             Ok(delivery) => {
-                info!(
-                    partition = delivery.partition,
-                    offset = delivery.offset,
-                    "message produced to topic: {}",
-                    topic_name
-                );
+                info!(partition = delivery.partition, offset = delivery.offset, "message produced to topic: {}", topic);
                 Ok(())
             }
             Err((err, _msg)) => {
-                error!(error = %err, "failed to produce message to topic: {}", topic_name);
+                error!(error = %err, "failed to produce message to topic: {}", topic);
                 Err(SDKError::Producer(ProducerError::Kafka(err)))
             }
         }
