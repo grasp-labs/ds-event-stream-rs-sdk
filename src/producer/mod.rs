@@ -61,7 +61,7 @@ use rdkafka::{
     config::ClientConfig,
     producer::{FutureProducer, FutureRecord},
 };
-use tracing::{error, info};
+use tracing::{debug, error};
 
 use crate::error::{Result, SDKError};
 use crate::model::v1::EventStream;
@@ -136,7 +136,7 @@ impl KafkaProducer {
             .set("sasl.password", credentials.password.clone())
             .to_owned();
 
-        info!(servers = %bootstrap_servers, "Kafka producer initialised");
+        debug!(servers = %bootstrap_servers, "Kafka producer initialised");
         Self::new(config)
     }
 
@@ -180,7 +180,12 @@ impl KafkaProducer {
 
         match self.inner.send(record, timeout).await {
             Ok(delivery) => {
-                info!(partition = delivery.partition, offset = delivery.offset, "message produced to topic: {}", topic);
+                debug!(
+                    partition = delivery.partition,
+                    offset = delivery.offset,
+                    "message produced to topic: {}",
+                    topic
+                );
                 Ok(())
             }
             Err((err, _msg)) => {

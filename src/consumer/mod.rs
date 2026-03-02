@@ -30,7 +30,7 @@
 //!
 //!     while let Some(next) = event_stream.next().await {
 //!         match next {
-//!             Ok(event) => info!("Received event: {:?}", event),
+//!             Ok(event) => debug!("Received event: {:?}", event),
 //!             Err(err) => error!("Failed to deserialize event: {}", err),
 //!         }
 //!     }
@@ -49,7 +49,7 @@ use rdkafka::{
 use serde_json::Deserializer;
 use serde_path_to_error::deserialize;
 use tokio_stream::{Stream, StreamExt};
-use tracing::{debug, error, info};
+use tracing::{debug, error};
 
 use crate::error::{Result, SDKError};
 use crate::model::v1::EventStream;
@@ -194,7 +194,7 @@ impl KafkaConsumer {
         let topic_refs: Vec<&str> = topics.iter().map(|topic| topic.as_ref()).collect();
         inner.subscribe(&topic_refs).map_err(ConsumerError::Kafka)?;
 
-        info!(topics = ?topic_refs, "Kafka consumer initialised");
+        debug!(topics = ?topic_refs, "Kafka consumer initialised");
         Ok(Self { inner })
     }
 
