@@ -119,7 +119,7 @@ impl KafkaProducer {
     /// * [`SDKError::Producer`] - If the producer fails to create.
     ///
     pub fn default(bootstrap_servers: &str, credentials: &ClientCredentials) -> Result<Self> {
-        let inner: FutureProducer = ClientConfig::new()
+        let config = ClientConfig::new()
             .set("bootstrap.servers", bootstrap_servers)
             .set("acks", "all")
             .set("retries", "3")
@@ -134,11 +134,10 @@ impl KafkaProducer {
             .set("sasl.mechanisms", "SCRAM-SHA-512")
             .set("sasl.username", credentials.username.clone())
             .set("sasl.password", credentials.password.clone())
-            .create()
-            .map_err(ProducerError::Kafka)?;
+            .to_owned();
 
         info!(servers = %bootstrap_servers, "Kafka producer initialised");
-        Ok(Self { inner })
+        Self::new(config)
     }
 
     /// Sends a key‑ed JSON message to **`topic`**.
@@ -167,11 +166,13 @@ impl KafkaProducer {
     ///
     pub async fn send_event(
         &self,
-        topic: &str,
-        key: &str,
+        topic: impl AsRef<str>,
+        key: impl AsRef<str>,
         payload: &EventStream,
         queue_timeout: Option<Duration>,
     ) -> Result<()> {
+        let topic = topic.as_ref();
+        let key = key.as_ref();
         let payload_json = self.serialize_message(payload)?;
 
         let record = FutureRecord::to(topic).payload(&payload_json).key(key);

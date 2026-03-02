@@ -186,14 +186,15 @@ impl KafkaConsumer {
     ///
     /// * [`SDKError::Consumer`] - If the consumer fails to create.
     ///
-    pub fn new(topics: &[&str], config: ClientConfig) -> Result<Self> {
+    pub fn new<T: AsRef<str>>(topics: &[T], config: ClientConfig) -> Result<Self> {
         let inner: StreamConsumer<_> = config
             .create_with_context(TracingContext)
             .map_err(ConsumerError::Kafka)?;
 
-        inner.subscribe(topics).map_err(ConsumerError::Kafka)?;
+        let topic_refs: Vec<&str> = topics.iter().map(|topic| topic.as_ref()).collect();
+        inner.subscribe(&topic_refs).map_err(ConsumerError::Kafka)?;
 
-        info!(topics = ?topics, "Kafka consumer initialised");
+        info!(topics = ?topic_refs, "Kafka consumer initialised");
         Ok(Self { inner })
     }
 
@@ -213,21 +214,14 @@ impl KafkaConsumer {
     ///
     /// * [`SDKError::Consumer`] - If the consumer fails to create.
     ///
-    pub fn default(
+    pub fn default<T: AsRef<str>>(
         bootstrap_servers: &str,
-        topics: &[&str],
+        topics: &[T],
         group_id: &str,
         credentials: &ClientCredentials,
     ) -> Result<Self> {
         let config = Self::get_default_config(bootstrap_servers, group_id, credentials);
-        let inner: StreamConsumer<_> = config
-            .create_with_context(TracingContext)
-            .map_err(ConsumerError::Kafka)?;
-
-        inner.subscribe(topics).map_err(ConsumerError::Kafka)?;
-
-        info!(topics = ?topics, "Kafka consumer initialised");
-        Ok(Self { inner })
+        Self::new(topics, config)
     }
 
     /* ---- helpers ----------------------------------------------------- */
